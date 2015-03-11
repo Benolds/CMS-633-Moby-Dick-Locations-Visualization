@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<title>Working with Google Maps API</title>
+<style type="text/css">
+  html { height: 100% }
+  body { height: 100%; margin: 0px; padding: 0px }
+  #map_canvas { height: 100% }
+</style>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false">
+</script>
+<script type="text/javascript">
+
+  // Add Global Variables
+  var CambridgeArea;
+  var map;
+  var toggleIMAGEstate;
+  var oldmap;
+  var imageBounds;
+  var FusionLayer1;
+  var FusionLayer2;
+
+  function initialize() {
+
+    var latlng = new google.maps.LatLng(0,0);
+    var myOptions = {
+      zoom: 1,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      scaleControl: true,
+      StreetViewControl: true,
+      mapTypeControlOptions: {  style: google.maps.MapTypeControlStyle.DROPDOWN_MENU } };
+    
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+    // imageBounds = new google.maps.LatLngBounds( new google.maps.LatLng(-82.0, -180.0), new google.maps.LatLng(82.36, 167.0));
+    // var overlayOpts = { opacity:0.8 };
+    // oldmap = new google.maps.GroundOverlay( "http://web.mit.edu/dsheehan/www/mb/MauryWhalingRoutes1857.jpg", imageBounds, overlayOpts);
+    // oldmap.setMap(map);
+
+    FusionLayer1 = new google.maps.FusionTablesLayer({
+      query: {
+        select: 'Long_DD',
+        from: '1ixqUNusCzjkGDS6DkGb_iTkKWOzZ1kP7mveJqZo5',
+        where: ("Page_No < " + 50 + " AND Page_No > " + 0)
+      }
+    });
+
+    FusionLayer1.setMap(map);
+
+    FusionLayer2 = new google.maps.FusionTablesLayer({
+      query: {
+        select: 'Long_DD',
+        from: '1ixqUNusCzjkGDS6DkGb_iTkKWOzZ1kP7mveJqZo5',
+        where: ("Page_No < " + 499 + " AND Page_No > " + 450)
+      },
+      styles: [{
+        markerOptions: {
+          iconName: "small_blue"
+        } 
+      }]
+    });
+
+    FusionLayer2.setMap(map);
+
+    toggleIMAGEstate = 1;
+
+  }
+
+  function filterLayer1(){
+
+    FusionLayer1.setMap(null);
+
+    var startPage = parseInt(document.getElementById("startPageText1").value);
+    var endPage = parseInt(document.getElementById("endPageText1").value);
+
+    if (startPage < 0 || endPage < 0 || startPage > endPage || endPage > 499 || startPage > 499) {
+      return;
+    }
+
+    console.log("update page range");
+
+    FusionLayer1 = new google.maps.FusionTablesLayer({
+      query: {
+        select: 'Long_DD',
+        from: '1ixqUNusCzjkGDS6DkGb_iTkKWOzZ1kP7mveJqZo5',
+        where: ("Page_No < " + endPage + " AND Page_No > " + startPage)
+      }
+    });
+    FusionLayer1.setMap(map);
+
+    document.getElementById("currentPages1").innerHTML = "(Currently showing page " + startPage + " - " + endPage + ")";
+  }
+
+  function filterLayer2(){
+
+    FusionLayer2.setMap(null);
+
+    var startPage = (document.getElementById("startPageText2").value);
+    var endPage = (document.getElementById("endPageText2").value);
+
+    if (startPage < 0 || endPage < 0 || startPage > endPage || endPage > 499 || startPage > 499) {
+      return;
+    }
+
+    console.log("update page range");
+    FusionLayer2 = new google.maps.FusionTablesLayer({
+      query: {
+        select: 'Long_DD',
+        from: '1ixqUNusCzjkGDS6DkGb_iTkKWOzZ1kP7mveJqZo5',
+        where: ("Page_No < " + endPage + " AND Page_No > " + startPage)
+      },
+      styles: [{
+        markerOptions: {
+          iconName: "small_blue"
+        } 
+      }]
+    });
+    FusionLayer2.setMap(map);
+
+    document.getElementById("currentPages2").innerHTML = "(Currently showing page " + startPage + " - " + endPage + ")";
+  }
+
+</script>
+</head>
+<body onload="initialize()">
+  <p>
+  </p>
+<p align="left">
+&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp <b>Google Maps API demo - Raster Images of Historical Maps and Fusion Table</b>
+</p>
+<p align="left">
+&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Edit this map. 
+</p>
+<p>
+<p>
+  <div id="blank" style="width:50px; height:100%;float:left;"></div>
+  <div id="map_canvas" style="width:700px; height:700px;float:left;"></div>
+
+  <div id="info" style="width:300px; height:150px;float:left; border: 1px solid black">
+    <label for="GO" id="ShowHideLabel"> Layer 1 (Red)</label>
+    </p>
+    <form name="jump">
+    <p align="center">
+    Page Rage: <input type="text" id="startPageText1" value="1"> - <input type="text" id="endPageText1" value="100">
+    <input type="button" onClick="filterLayer1();" value="Filter by Pages" name="Filter Layer 1">
+    </p>
+    <p id="currentPages1" align="center">(Currently showing page 1 - 50)</p>
+    </form>
+  </div>
+
+  <div id="info" style="width:300px; height:150px;float:left; border: 1px solid black">
+    <label for="GO" id="ShowHideLabel"> Layer 2 (Blue)</label>
+    </p>
+    <form name="jump">
+    <p align="center">
+    Page Rage: <input type="text" id="startPageText2" value="101"> - <input type="text" id="endPageText2" value="200">
+    <input type="button" onClick="filterLayer2();" value="Filter by Pages" name="Filter Layer 2">
+    </p>
+    <p id="currentPages2" align="center">(Currently showing page 450 - 499)</p>
+    </form>
+  </div>
+
+</body>
+</html>

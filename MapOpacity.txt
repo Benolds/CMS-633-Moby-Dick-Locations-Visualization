@@ -1,0 +1,4 @@
+var overlayOpts = { opacity:0.8 }
+imageBounds = new google.maps.LatLngBounds( new google.maps.LatLng(-82.0, -180.0), new google.maps.LatLng(82.36, 167.0));
+oldmap = new google.maps.GroundOverlay( "http://web.mit.edu/dsheehan/www/mb/MauryWhalingRoutes1857.jpg", imageBounds, overlayOpts);
+oldmap.setMap(map);

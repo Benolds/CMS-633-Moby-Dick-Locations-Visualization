@@ -1,0 +1,2 @@
+FusionLayer = new google.maps.FusionTablesLayer(1ixqUNusCzjkGDS6DkGb_iTkKWOzZ1kP7mveJqZo5, {suppressInfoWindows: false});
+FusionLayer.setMap(map); 
